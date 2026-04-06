@@ -3,12 +3,79 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>nxm | NPX Manager</title>
+    <title>fpx | NPX Manager</title>
     <style>
-        body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif; background-color: #0d1117; color: #c9d1d9; margin: 0; padding: 4rem 2rem; display: flex; flex-direction: column; align-items: center; }
-        .container { max-width: 700px; width: 100%; }
-        h1 { color: #58a6ff; font-size: 3rem; margin-bottom: 0.5rem; }
+        body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; background-color: #0d1117; color: #c9d1d9; margin: 0; padding: 4rem 2rem; display: flex; flex-direction: column; align-items: center; }
+        .container { max-width: 700px; width: 100%; position: relative; }
+
+        /* Header & Flex layout for title and badge */
+        .header-row { display: flex; align-items: center; justify-content: space-between; margin-bottom: 0.5rem; }
+        h1 { color: #58a6ff; font-size: 3rem; margin: 0; }
         p { font-size: 1.2rem; line-height: 1.6; color: #8b949e; }
+
+        /* The Version Badge UI */
+        .version-badge {
+            position: relative;
+            display: inline-flex;
+            align-items: center;
+            background: rgba(255, 255, 255, 0.05);
+            border-left: 3px solid #ffffff; /* The White Streak */
+            padding: 8px 16px;
+            border-radius: 0 6px 6px 0;
+            color: #ffffff;
+            font-family: "Courier New", Courier, monospace;
+            font-weight: bold;
+            cursor: help;
+        }
+
+        /* Pulsing Status Dot */
+        .status-dot {
+            width: 10px;
+            height: 10px;
+            background-color: #3fb950;
+            border-radius: 50%;
+            margin-right: 10px;
+            box-shadow: 0 0 8px #3fb950;
+            animation: pulse 2s infinite;
+        }
+
+        @keyframes pulse {
+            0% { box-shadow: 0 0 0 0 rgba(63, 185, 80, 0.7); }
+            70% { box-shadow: 0 0 0 6px rgba(63, 185, 80, 0); }
+            100% { box-shadow: 0 0 0 0 rgba(63, 185, 80, 0); }
+        }
+
+        /* Tooltip (Changelog) */
+        .tooltip {
+            visibility: hidden;
+            opacity: 0;
+            position: absolute;
+            top: 120%;
+            right: 0;
+            background: #161b22;
+            border: 1px solid #30363d;
+            padding: 16px;
+            border-radius: 8px;
+            width: max-content;
+            max-width: 350px;
+            max-height: 250px;
+            overflow-y: auto;
+            z-index: 100;
+            transition: all 0.2s ease-in-out;
+            box-shadow: 0 8px 24px rgba(0,0,0,0.5);
+            text-align: left;
+            font-family: -apple-system, sans-serif;
+            font-weight: normal;
+            font-size: 0.9rem;
+            line-height: 1.4;
+            color: #c9d1d9;
+            white-space: pre-wrap; /* Preserves markdown formatting */
+        }
+
+        /* Show tooltip on hover */
+        .version-badge:hover .tooltip { visibility: visible; opacity: 1; transform: translateY(5px); }
+
+        /* Terminal styling */
         .terminal { background-color: #161b22; border: 1px solid #30363d; border-radius: 6px; padding: 1.5rem; font-family: "Courier New", Courier, monospace; margin: 2rem 0; overflow-x: auto; }
         .prompt::before { content: "$ "; color: #3fb950; }
         .comment { color: #8b949e; font-style: italic; display: block; margin-bottom: 0.5rem; }
@@ -18,15 +85,27 @@
 </head>
 <body>
 <div class="container">
-    <h1>nxm</h1>
+    <div class="header-row">
+        <h1>fpx</h1>
+
+        <div class="version-badge">
+            <div class="status-dot"></div>
+            <span id="version-text">loading...</span>
+
+            <div class="tooltip" id="changelog-tooltip">
+                Fetching latest changelog...
+            </div>
+        </div>
+    </div>
+
     <p>A lightweight manager for caching and aliasing your frequently used one-off `npx` commands. Stop typing full package names and start running them like native tools.</p>
 
     <div class="terminal">
         <span class="comment"># Install globally via npm</span>
-        <span class="prompt">npm install -g nxm-cli</span>
+        <span class="prompt">npm install -g fpx-now</span>
         <br><br>
         <span class="comment"># Alias an npx package</span>
-        <span class="prompt">nxm add port-whisperer as ports "Manages ports"</span>
+        <span class="prompt">fpx add port-whisperer as ports "Manages ports"</span>
         <br><br>
         <span class="comment"># Run it natively</span>
         <span class="prompt">ports</span>
@@ -34,5 +113,32 @@
 
     <a href="https://github.com/mehdiacho/fpx-now" class="btn">View on GitHub</a>
 </div>
+
+<script>
+    // NOTE: Ensure 'fpx-now' matches your actual GitHub repository name
+    const repoUrl = 'https://api.github.com/repos/mehdiacho/fpx-now/releases/latest';
+
+    fetch(repoUrl)
+        .then(response => {
+            if (!response.ok) throw new Error('No release found');
+            return response.json();
+        })
+        .then(data => {
+            document.getElementById('version-text').innerText = data.tag_name || 'v1.0.1';
+
+            // Clean up the markdown body slightly for plain text viewing
+            let changelog = data.body || 'No release notes provided.';
+
+            // If GitHub auto-generated notes, remove the generic "Full Changelog" link
+            changelog = changelog.replace(/.*Full Changelog.*/g, '').trim();
+
+            document.getElementById('changelog-tooltip').innerText = changelog;
+        })
+        .catch(error => {
+            console.warn('Could not fetch latest release:', error);
+            document.getElementById('version-text').innerText = 'v1.0.1';
+            document.getElementById('changelog-tooltip').innerText = 'Release notes unavailable.';
+        });
+</script>
 </body>
 </html>
