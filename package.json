@@ -1,0 +1,15 @@
+{
+  "name": "fpx-now",
+  "version": "1.0.0",
+  "description": "A lightweight manager for aliasing and caching npx commands.",
+  "main": "cli.js",
+  "bin": {
+    "nxm": "./cli.js"
+  },
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": ["npx", "manager", "cli", "alias", "utility"],
+  "author": "Mehdi Acho",
+  "license": "MIT"
+}
