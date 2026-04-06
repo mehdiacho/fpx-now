@@ -1,6 +1,6 @@
 {
   "name": "fpx-now",
-  "version": "1.0.4",
+  "version": "1.0.5",
   "description": "A lightweight manager for caching and aliasing your npx commands.",
   "main": "cli.js",
   "bin": {
