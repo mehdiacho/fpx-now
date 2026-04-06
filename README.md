@@ -12,13 +12,29 @@ Tired of typing out full `npx` package names and arguments for tools you only us
 
 ## Installation
 
-Install the CLI globally via npm:
+**1. Install the CLI globally via npm:**
 
 ```bash
 npm install -g fpx-now
 ```
 
-This installs the `fpx-now` package and makes the `fpx` command available globally.
+**2. Configure your PATH (one-time setup):**
+
+`fpx` stores your lightweight aliases in a hidden folder (`~/.npx-aliases`) to keep your global `node_modules` clean. Add this folder to your system `PATH`, then restart your terminal.
+
+Mac / Linux (Bash):
+
+```bash
+echo 'export PATH="$HOME/.npx-aliases:$PATH"' >> ~/.bashrc && source ~/.bashrc
+```
+
+If you use Zsh, replace `.bashrc` with `.zshrc`.
+
+Windows (PowerShell):
+
+```powershell
+$p = [Environment]::GetEnvironmentVariable("PATH","User"); [Environment]::SetEnvironmentVariable("PATH", "$p;$HOME\.npx-aliases", "User")
+```
 
 ## Usage
 

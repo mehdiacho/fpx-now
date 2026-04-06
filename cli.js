@@ -19,6 +19,32 @@ const command = args[0];
 const pkgName = args[1];
 const restArgs = args.slice(2);
 
+// --- NEW FUNCTION: Check if Alias Dir is in system PATH ---
+function checkPath() {
+    const pathDelimiter = isWindows ? ';' : ':';
+    const envPath = process.env.PATH || '';
+
+    // Normalize paths to prevent slash/backslash mismatch issues
+    const hasPath = envPath.split(pathDelimiter).some(p =>
+        path.normalize(p) === path.normalize(ALIAS_DIR) ||
+        path.normalize(p) === path.normalize(ALIAS_DIR + path.sep)
+    );
+
+    if (!hasPath) {
+        console.log("\n\x1b[33m%s\x1b[0m", "⚠️  WARNING: Your alias folder is not in your system PATH!");
+        console.log("Your commands won't work until you add it. Run the following command:\n");
+
+        if (isWindows) {
+            console.log("\x1b[36m%s\x1b[0m", `  $p = [Environment]::GetEnvironmentVariable("PATH","User"); [Environment]::SetEnvironmentVariable("PATH", "$p;${ALIAS_DIR}", "User")`);
+            console.log("\n(Then close and reopen your terminal)");
+        } else {
+            console.log("\x1b[36m%s\x1b[0m", `  echo 'export PATH="${ALIAS_DIR}:$PATH"' >> ~/.bashrc && source ~/.bashrc`);
+            console.log("  (Note: If you use Zsh, replace .bashrc with .zshrc in the command above)");
+        }
+        console.log();
+    }
+}
+
 // Helper function to create wrapper scripts
 function createWrapper(targetName, npxPackage) {
     if (isWindows) {
@@ -67,6 +93,9 @@ switch (command) {
 
         console.log("\x1b[32m%s\x1b[0m", `✅ Added '${pkgName}' to your npx aliases!`);
         if (alias) console.log("\x1b[36m%s\x1b[0m", `🔗 Alias '${alias}' is also ready to use.`);
+
+        // Trigger the Path Check after a successful add
+        checkPath();
         break;
 
     case 'remove':
@@ -116,10 +145,18 @@ switch (command) {
         }
         break;
 
+    case 'setup':
+        checkPath();
+        if (process.env.PATH.includes(ALIAS_DIR)) {
+            console.log("\x1b[32m%s\x1b[0m", "✅ Your system PATH is correctly configured!");
+        }
+        break;
+
     default:
         console.log("Usage:");
         console.log("  fpx add <package> [as <alias>] <description>  - Registers a new npx wrapper");
         console.log("  fpx remove <package or alias>                 - Deletes wrappers and registry entry");
         console.log("  fpx list                                      - Shows all your registered packages");
+        console.log("  fpx setup                                     - Checks if your system PATH is configured");
         break;
 }
