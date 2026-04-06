@@ -1,4 +1,6 @@
 # fpx 🚀
+[![npm version](https://img.shields.io/npm/v/fpx-now.svg?color=blue)](https://www.npmjs.com/package/fpx-now)
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 
 > A lightweight manager for caching and aliasing your frequently used one-off `npx` commands.
 
