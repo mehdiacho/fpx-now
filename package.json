@@ -1,28 +1,42 @@
 {
   "name": "fpx-now",
-  "version": "1.0.3",
-  "description": "A lightweight manager for aliasing and caching npx commands.",
+  "version": "1.0.4",
+  "description": "A lightweight manager for caching and aliasing your npx commands.",
   "main": "cli.js",
-  "publishConfig": {
-    "provenance": true
+  "bin": {
+    "fpx": "./cli.js"
+  },
+  "files": [
+    "cli.js"
+  ],
+  "engines": {
+    "node": ">=14.0.0"
+  },
+  "homepage": "https://fpx.mehdiacho.tech",
+  "bugs": {
+    "url": "https://github.com/mehdiacho/fpx-now/issues"
   },
   "repository": {
     "type": "git",
     "url": "git+https://github.com/mehdiacho/fpx-now.git"
   },
-  "bin": {
-    "fpx": "./cli.js"
+  "publishConfig": {
+    "provenance": true
   },
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 0"
+    "test": "echo \"Tests coming soon!\" && exit 0"
   },
   "keywords": [
     "npx",
     "manager",
     "cli",
     "alias",
-    "utility"
+    "utility",
+    "cache"
   ],
-  "author": "Mehdi Acho",
+  "author": {
+    "name": "Mehdi Acho",
+    "url": "https://mehdiacho.tech"
+  },
   "license": "MIT"
 }
