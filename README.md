@@ -18,6 +18,8 @@ Install the CLI globally via npm:
 npm install -g fpx-now
 ```
 
+This installs the `fpx-now` package and makes the `fpx` command available globally.
+
 ## Usage
 
 Once installed, you can use the `fpx` command anywhere in your terminal.
